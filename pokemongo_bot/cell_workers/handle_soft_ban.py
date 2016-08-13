@@ -3,13 +3,15 @@ from random import randint
 from pgoapi.utilities import f2i
 
 from pokemongo_bot.constants import Constants
-from pokemongo_bot.cell_workers.base_task import BaseTask
+from pokemongo_bot.base_task import BaseTask
 from pokemongo_bot.cell_workers import MoveToFort
 from pokemongo_bot.cell_workers.utils import distance
 from pokemongo_bot.worker_result import WorkerResult
 
 
 class HandleSoftBan(BaseTask):
+    SUPPORTED_TASK_API_VERSION = 1
+
     def work(self):
         if not self.should_run():
             return
@@ -27,7 +29,7 @@ class HandleSoftBan(BaseTask):
         )
 
         if fort_distance > Constants.MAX_DISTANCE_FORT_IS_REACHABLE:
-            MoveToFort(self.bot, config=None).work()
+            MoveToFort(self.bot, config={}).work()
             self.bot.recent_forts = self.bot.recent_forts[0:-1]
             if forts[0]['id'] in self.bot.fort_timeouts:
                 del self.bot.fort_timeouts[forts[0]['id']]
